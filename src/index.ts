@@ -121,6 +121,7 @@ app.post(
 // Buka file server-manual.ts dari Minggu 9.
 // Tulis di komentar: berapa baris kode yang dihemat oleh Express
 // untuk route yang sama?
+/*pada routing server manual terdapat 104 line membuat line panjang dan tidak efisien pada express.js hanya 5 line saja*/
 
 
 app.listen(PORT, () => {
