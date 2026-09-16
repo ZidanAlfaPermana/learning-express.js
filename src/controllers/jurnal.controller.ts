@@ -62,18 +62,20 @@ export const buatJurnal = (req: Request<{}, {}, JurnalBody>, res: Response): voi
 
     if (isPesertaValid(idPeserta)) {
         res.status(404).json({ error: `Peserta dengan id ${idPeserta} tidak ditemukan` });
+        return;
     }
 
     dataJurnal.push(baru);
     res.status(201).json(baru);
 };
 
-export const updateJurnal = (req: Request<{id: number}, {}, JurnalBody>, res: Response): void => {
+export const updateJurnal = (req: Request<{id: string}, {}, JurnalBody>, res: Response): void => {
     const id = Number(req.params.id);
     const index = dataJurnal.findIndex((p) => p.id === id);
 
     if (index === -1) {
         res.status(404).json({ error: `Jurnal dengan id ${id} tidak ditemukan` });
+        return;
     }
 
     const { idPeserta, status, kegiatan, hambatan, rencanaBesok, linkCommit } = req.body;
@@ -81,6 +83,7 @@ export const updateJurnal = (req: Request<{id: number}, {}, JurnalBody>, res: Re
 
     if (isPesertaValid(idPeserta)) {
         res.status(404).json({ error: `Peserta dengan id ${idPeserta} tidak ditemukan` });
+        return;
     }
 
     const updatedJurnal: Jurnal = {
@@ -99,6 +102,7 @@ export const hapusJurnal = (req: Request, res: Response): void => {
 
     if (jurnalIndex === -1) {
         res.status(404).json({ error: `Jurnal dengan id ${id} tidak ditemukan` });
+        return;
     }
 
     dataJurnal.splice(jurnalIndex, 1);

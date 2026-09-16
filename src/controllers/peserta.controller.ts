@@ -47,12 +47,13 @@ export const buatPeserta = (req: Request<{}, {}, PesertaBody>, res: Response): v
     res.status(201).json(baru);
 };
 
-export const updatePeserta = (req: Request<{id: number}, {}, PesertaBody>, res: Response): void => {
+export const updatePeserta = (req: Request<{id: string}, {}, PesertaBody>, res: Response): void => {
     const id = Number(req.params.id);
     const index = dataPeserta.findIndex((p) => p.id === id);
 
     if (index === -1) {
         res.status(404).json({ error: `Peserta dengan id ${id} tidak ditemukan` });
+        return;
     }
 
     const { nama, sekolah, kelas, jurusan } = req.body;
@@ -74,6 +75,7 @@ export const hapusPeserta = (req: Request, res: Response): void => {
 
     if (pesertaIndex === -1) {
         res.status(404).json({ error: `Peserta dengan id ${id} tidak ditemukan` });
+        return;
     }
 
     dataPeserta.splice(pesertaIndex, 1);
