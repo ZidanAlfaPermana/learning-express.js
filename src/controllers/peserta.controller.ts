@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import {dataPeserta} from "../data/dummy";
 import {Peserta} from "../types";
+import {asyncHandler} from "../utils/asyncHandler";
 
 interface PesertaBody {
     id: number;
@@ -11,7 +12,7 @@ interface PesertaBody {
     fase: number;
 }
 
-export const getSemuaPeserta = (req: Request, res: Response): void => {
+export const getSemuaPeserta = asyncHandler( async (req: Request, res: Response) => {
     const { sekolah, fase, limit } = req.query;
     let hasil = dataPeserta;
 
@@ -26,9 +27,9 @@ export const getSemuaPeserta = (req: Request, res: Response): void => {
     const data: Peserta[] = hasil.slice(0, Number(limit ?? 20));
 
     res.json({ total: data.length, data: data });
-};
+});
 
-export const getPesertaById = (req: Request, res: Response): void => {
+export const getPesertaById = asyncHandler( async (req: Request, res: Response) => {
     const id = Number(req.params.id);
     const peserta = dataPeserta.find((p) => p.id === id);
 
@@ -38,16 +39,16 @@ export const getPesertaById = (req: Request, res: Response): void => {
     }
 
     res.json(peserta);
-};
+});
 
-export const buatPeserta = (req: Request<{}, {}, PesertaBody>, res: Response): void => {
+export const buatPeserta = asyncHandler( async (req: Request<{}, {}, PesertaBody>, res: Response) => {
     const { nama, sekolah, kelas, jurusan, fase } = req.body;
     const baru = { id: dataPeserta.length + 1, nama, sekolah, kelas, jurusan, fase };
     dataPeserta.push(baru);
     res.status(201).json(baru);
-};
+});
 
-export const updatePeserta = (req: Request<{id: string}, {}, PesertaBody>, res: Response): void => {
+export const updatePeserta = asyncHandler(async (req: Request<any, {}, PesertaBody>, res: Response) => {
     const id = Number(req.params.id);
     const index = dataPeserta.findIndex((p) => p.id === id);
 
@@ -67,9 +68,9 @@ export const updatePeserta = (req: Request<{id: string}, {}, PesertaBody>, res: 
 
     dataPeserta[index] = updatedJurnal;
     res.status(200).json({ success: `Peserta dengan id ${id} berhasil di edit` });
-}
+});
 
-export const hapusPeserta = (req: Request, res: Response): void => {
+export const hapusPeserta = asyncHandler( async (req: Request, res: Response) => {
     const id = Number(req.params.id);
     const pesertaIndex = dataPeserta.findIndex((p) => p.id === id)
 
@@ -80,4 +81,4 @@ export const hapusPeserta = (req: Request, res: Response): void => {
 
     dataPeserta.splice(pesertaIndex, 1);
     res.status(204).json({});
-}
+})

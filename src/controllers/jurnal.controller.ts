@@ -1,6 +1,7 @@
 import { Request, Response } from "express";
 import {dataJurnal, dataPeserta} from "../data/dummy";
 import {Jurnal} from "../types";
+import {asyncHandler} from "../utils/asyncHandler";
 
 interface JurnalBody {
     idPeserta: number;
@@ -15,8 +16,8 @@ const isPesertaValid = (idPeserta: number): boolean => {
     return dataPeserta.find(p => p.id === idPeserta) === undefined;
 }
 
-export const getSemuaJurnal = (req: Request, res: Response): void => {
-    const { peserta, status, limit } = req.query;
+export const getSemuaJurnal = asyncHandler(async (req: Request, res: Response)  => {
+    const {peserta, status, limit} = req.query;
     let hasil = dataJurnal;
 
     if (peserta) {
@@ -29,10 +30,10 @@ export const getSemuaJurnal = (req: Request, res: Response): void => {
 
     const data: Jurnal[] = hasil.slice(0, Number(limit ?? 20));
 
-    res.json({ total: data.length, data: data });
-};
+    res.json({total: data.length, data: data});
+});
 
-export const getJurnalById = (req: Request, res: Response): void => {
+export const getJurnalById = asyncHandler(async (req: Request, res: Response) => {
     const id = Number(req.params.id);
     const jurnal = dataJurnal.find((p) => p.id === id);
 
@@ -42,9 +43,9 @@ export const getJurnalById = (req: Request, res: Response): void => {
     }
 
     res.json(jurnal);
-};
+});
 
-export const getJurnalPesertaById = (req: Request, res: Response): void => {
+export const getJurnalPesertaById = asyncHandler(async (req: Request, res: Response) => {
     const id = Number(req.params.id);
     const jurnal = dataJurnal.filter((p) => p.idPeserta === id);
 
@@ -54,9 +55,9 @@ export const getJurnalPesertaById = (req: Request, res: Response): void => {
     }
 
     res.json(jurnal);
-}
+})
 
-export const buatJurnal = (req: Request<{}, {}, JurnalBody>, res: Response): void => {
+export const buatJurnal = asyncHandler(async (req: Request<{}, {}, JurnalBody>, res: Response) => {
     const { idPeserta, status, kegiatan, hambatan, rencanaBesok, linkCommit } = req.body;
     const baru = { id: dataJurnal.length + 1, idPeserta, status, kegiatan, hambatan, rencanaBesok, linkCommit };
 
@@ -67,9 +68,9 @@ export const buatJurnal = (req: Request<{}, {}, JurnalBody>, res: Response): voi
 
     dataJurnal.push(baru);
     res.status(201).json(baru);
-};
+});
 
-export const updateJurnal = (req: Request<{id: string}, {}, JurnalBody>, res: Response): void => {
+export const updateJurnal = asyncHandler(async (req: Request<any, {}, JurnalBody>, res: Response) => {
     const id = Number(req.params.id);
     const index = dataJurnal.findIndex((p) => p.id === id);
 
@@ -94,9 +95,9 @@ export const updateJurnal = (req: Request<{id: string}, {}, JurnalBody>, res: Re
 
     dataJurnal[index] = updatedJurnal;
     res.status(200).json({ success: `Jurnal dengan id ${id} berhasil di edit` });
-}
+});
 
-export const hapusJurnal = (req: Request, res: Response): void => {
+export const hapusJurnal = asyncHandler(async (req: Request, res: Response) => {
     const id = Number(req.params.id);
     const jurnalIndex = dataJurnal.findIndex((p) => p.id === id)
 
@@ -107,4 +108,4 @@ export const hapusJurnal = (req: Request, res: Response): void => {
 
     dataJurnal.splice(jurnalIndex, 1);
     res.status(204).json({});
-}
+});
